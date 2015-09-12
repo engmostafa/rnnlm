@@ -4,7 +4,7 @@ from rnn import *
 
 class TestRNN(unittest.TestCase):
 
-    def test_RNN_Train(self):
+    def tesT_RNN_Train(self):
         
         rnn = RNN(10, 40, 50)
         
@@ -13,4 +13,4 @@ class TestRNN(unittest.TestCase):
 
         print Fore.CYAN, rnn.cost(test_x, test_y)
         for i in range(100):
-            print Fore.GREEN, rnn.train(test_x, test_y, 0.5)
+            print Fore.GREEN, rnn.train(test_x, test_y, 4.5)

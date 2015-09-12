@@ -63,6 +63,9 @@ class RNN():
         self.train = theano.function( inputs  = [idxs, y, lr],
                                       outputs = totalCost,
                                       updates = updates )
+
+
+
         # #
         # self.normalize = theano.function( inputs = [],
         #                  updates = {self.emb:\
@@ -94,3 +97,33 @@ class RNN():
                          updates = {self.emb:\
                          self.emb/T.sqrt((self.emb**2).sum(axis=1)).dimshuffle(0,'x')})
 
+
+
+    # @staticmethod
+    def load(self, fname):
+
+        import cPickle
+
+        # try:
+        f = file(fname, 'rb')
+        out = cPickle.load(f)
+        f.close()
+
+        self.__dict__.update(out)
+
+        # except Exception, e:
+        #     print "LOADERRER", e
+        #     pass
+
+    def save(self, ep = 0):
+        import cPickle
+
+        f = file('rnn.save_%d'%ep, 'wb')
+        g = file('rnn.save', 'wb')
+        state = dict(self.__dict__)
+        import sys
+        sys.setrecursionlimit(5000)
+        cPickle.dump(state, f, protocol=cPickle.HIGHEST_PROTOCOL)
+        cPickle.dump(state, g, protocol=cPickle.HIGHEST_PROTOCOL)
+        f.close()
+        g.close()
