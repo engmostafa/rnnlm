@@ -20,4 +20,5 @@ rnn.load('rnn.save')
 
 trainer = Trainer(c,rnn, nepochs=50, alpha = 0.001)
 trainer.generate_sequence()
-trainer.train()
+# trainer.train()
+trainer.mainEventLoop()

@@ -22,6 +22,17 @@ class Trainer():
         self.scores = {}
 
 
+    def mainEventLoop(self):
+
+        sig = 0
+
+        while (sig != 1 and sig !=2):
+            sig = self.checkForSignals()
+            if sig == 2:
+                self.train()
+
+
+
 
     def train(self):
         

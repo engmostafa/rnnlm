@@ -5,6 +5,7 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 Corpus	dataLoader.py	/^class Corpus():$/;"	c
+Corpus	run.py	/^from dataLoader import Corpus$/;"	i
 Corpus	trainer_test.py	/^from dataLoader import Corpus$/;"	i
 Fore	dataLoader.py	/^from colorama import Fore$/;"	i
 Fore	dataLoader_test.py	/^from colorama import Fore$/;"	i
@@ -17,6 +18,10 @@ OrderedDict	is13/rnn/jordan.py	/^from collections import OrderedDict$/;"	i
 OrderedDict	rnn.py	/^from collections import OrderedDict$/;"	i
 PREFIX	is13/data/load.py	/^PREFIX = os.getenv('ATISDATA', '')$/;"	v
 PREFIX	is13/metrics/accuracy.py	/^PREFIX = os.getenv('ATISDATA', '')$/;"	v
+Perplexicity_xy	trainer.py	/^    def Perplexicity_xy(self,x,y):$/;"	m	class:Trainer
+Queue	trainer.py	/^import Queue$/;"	i
+Queue	ui.py	/^import threading, Queue$/;"	i
+Queue	ui_test.py	/^import Queue$/;"	i
 RNN	rnn.py	/^class RNN():$/;"	c
 RNN	trainer.py	/^from rnn import RNN$/;"	i
 T	is13/rnn/elman.py	/^from theano import tensor as T$/;"	i
@@ -25,16 +30,22 @@ T	rnn.py	/^from theano import tensor as T$/;"	i
 TestDataLoader	dataLoader_test.py	/^class TestDataLoader(unittest.TestCase):$/;"	c
 TestRNN	rnn_test.py	/^class TestRNN(unittest.TestCase):$/;"	c
 TestRNNTrainer	trainer_test.py	/^class TestRNNTrainer(unittest.TestCase):$/;"	c
+TestUI	ui_test.py	/^class TestUI(unittest.TestCase):$/;"	c
 Test_loading_XY_Pair	dataLoader_test.py	/^    def Test_loading_XY_Pair(self):$/;"	m	class:TestDataLoader
 Test_loading_sentences	dataLoader_test.py	/^    def Test_loading_sentences(self):$/;"	m	class:TestDataLoader
+Trainer	run.py	/^from trainer import Trainer$/;"	i
 Trainer	trainer.py	/^class Trainer():$/;"	c
 Trainer	trainer_test.py	/^from trainer import Trainer$/;"	i
+UIThread	trainer.py	/^from ui import UIThread$/;"	i
+UIThread	ui.py	/^class UIThread(threading.Thread):$/;"	c
+UIThread	ui_test.py	/^from ui import UIThread$/;"	i
 WordVec	wordVec.py	/^class WordVec():$/;"	c
 __init__	dataLoader.py	/^    def __init__(self, txt):$/;"	m	class:Corpus
 __init__	is13/rnn/elman.py	/^    def __init__(self, nh, nc, ne, de, cs):$/;"	m	class:model
 __init__	is13/rnn/jordan.py	/^    def __init__(self, nh, nc, ne, de, cs):$/;"	m	class:model
 __init__	rnn.py	/^    def __init__(self, nh, ne, de ):$/;"	m	class:RNN
 __init__	trainer.py	/^    def __init__(self, c, rnn, nepochs = 12, alpha = 0.1):$/;"	m	class:Trainer
+__init__	ui.py	/^    def __init__(self, inputChannel, sigChannel = None):$/;"	m	class:UIThread
 __init__	wordVec.py	/^    def __init__(NumToWordDict, d = 100):$/;"	m	class:WordVec
 atisfold	is13/data/load.py	/^def atisfold(fold):$/;"	f
 atisfull	is13/data/load.py	/^def atisfull():$/;"	f
@@ -42,8 +53,14 @@ best_f1	is13/examples/elman-forward.py	/^            best_f1 = res_valid['f1']$/
 best_f1	is13/examples/elman-forward.py	/^    best_f1 = -numpy.inf$/;"	v
 best_f1	is13/examples/jordan-forward.py	/^            best_f1 = res_valid['f1']$/;"	v
 best_f1	is13/examples/jordan-forward.py	/^    best_f1 = -numpy.inf$/;"	v
+brown	dataLoader.py	/^        from nltk.corpus import brown$/;"	i
+brownInit	dataLoader.py	/^    def brownInit(self, num=200):$/;"	m	class:Corpus
+c	run.py	/^c = Corpus(txt)$/;"	v
 cPickle	is13/data/load.py	/^import cPickle$/;"	i
 cPickle	is13/metrics/accuracy.py	/^import cPickle$/;"	i
+cPickle	rnn.py	/^        import cPickle$/;"	i
+calcPerplexicity	trainer.py	/^    def calcPerplexicity(self, c=None):$/;"	m	class:Trainer
+checkForSignals	trainer.py	/^    def checkForSignals(self):$/;"	m	class:Trainer
 chmod	is13/metrics/accuracy.py	/^from os import chmod$/;"	i
 conlleval	is13/examples/elman-forward.py	/^from is13.metrics.accuracy import conlleval$/;"	i
 conlleval	is13/examples/jordan-forward.py	/^from is13.metrics.accuracy import conlleval$/;"	i
@@ -53,6 +70,8 @@ contextwin	is13/examples/jordan-forward.py	/^from is13.utils.tools import shuffl
 contextwin	is13/utils/tools.py	/^def contextwin(l, win):$/;"	f
 cs	is13/examples/elman-forward.py	/^                    cs = s['win'] )$/;"	v
 cs	is13/examples/jordan-forward.py	/^                    cs = s['win'] )$/;"	v
+curses	ui.py	/^import curses$/;"	i
+curses	ui.py	/^import curses.textpad as textpad$/;"	i
 cwords	is13/examples/elman-forward.py	/^            cwords = contextwin(train_lex[i], s['win'])$/;"	v
 cwords	is13/examples/jordan-forward.py	/^            cwords = contextwin(train_lex[i], s['win'])$/;"	v
 data	is13/data/load.py	/^    data = atisfull()$/;"	v
@@ -61,10 +80,17 @@ de	is13/examples/jordan-forward.py	/^                    de = s['emb_dimension']
 docs_to_indices	dataLoader.py	/^    def docs_to_indices(self):$/;"	m	class:Corpus
 download	is13/data/load.py	/^def download(origin):$/;"	f
 download	is13/metrics/accuracy.py	/^from is13.data.load import download$/;"	i
+exitSelf	ui.py	/^    def exitSelf(self):$/;"	m	class:UIThread
+f	run.py	/^f = open(fname, 'r')$/;"	v
+findProbabilityOfSentance	trainer.py	/^    def findProbabilityOfSentance(self, sentance = "The president said he will ask congress"):$/;"	m	class:Trainer
+fname	run.py	/^fname = 'shakespear.txt'$/;"	v
 folder	is13/examples/elman-forward.py	/^    folder = os.path.basename(__file__).split('.')[0]$/;"	v
 folder	is13/examples/jordan-forward.py	/^    folder = os.path.basename(__file__).split('.')[0]$/;"	v
+fullDataTest	trainer.py	/^    def fullDataTest(self):$/;"	m	class:Trainer
 generateVocabulary	dataLoader.py	/^    def generateVocabulary(self):$/;"	m	class:Corpus
+generate_sequence	trainer.py	/^    def generate_sequence(self):$/;"	m	class:Trainer
 getSentances	dataLoader.py	/^    def getSentances(self):$/;"	m	class:Corpus
+getTextString	ui.py	/^    def getTextString(self):$/;"	m	class:UIThread
 get_perf	is13/metrics/accuracy.py	/^def get_perf(filename):$/;"	f
 get_perfo	is13/metrics/accuracy.py	/^def get_perfo(filename):$/;"	f
 groundtruth_test	is13/examples/elman-forward.py	/^        groundtruth_test = [ map(lambda x: idx2label[x], y) for y in test_y ]$/;"	v
@@ -79,15 +105,20 @@ idx2ne	is13/data/load.py	/^    idx2ne = dict((v,k) for k,v in ne2idx.iteritems()
 idx2w	is13/data/load.py	/^    idx2w  = dict((v,k) for k,v in w2idx.iteritems())$/;"	v
 idx2word	is13/examples/elman-forward.py	/^    idx2word  = dict((k,v) for v,k in dic['words2idx'].iteritems())$/;"	v
 idx2word	is13/examples/jordan-forward.py	/^    idx2word  = dict((k,v) for v,k in dic['words2idx'].iteritems())$/;"	v
+idx_to_sentance	dataLoader.py	/^    def idx_to_sentance(self, seq):$/;"	m	class:Corpus
 initializeProcs	rnn.py	/^    def initializeProcs(self):$/;"	m	class:RNN
+initialize_ops	rnn.py	/^    def initialize_ops(self):$/;"	m	class:RNN
 isfile	is13/data/load.py	/^from os.path import isfile$/;"	i
 isfile	is13/metrics/accuracy.py	/^from os.path import isfile, join$/;"	i
 join	is13/metrics/accuracy.py	/^from os.path import isfile, join$/;"	i
+join	ui.py	/^    def join(self, timeout=None):$/;"	m	class:UIThread
 labels	is13/examples/elman-forward.py	/^            labels = train_y[i]$/;"	v
 labels	is13/examples/jordan-forward.py	/^            labels = train_y[i]$/;"	v
 load	is13/data/load.py	/^def load(filename):$/;"	f
 load	is13/examples/elman-forward.py	/^from is13.data import load$/;"	i
 load	is13/examples/jordan-forward.py	/^from is13.data import load$/;"	i
+load	rnn.py	/^    def load(self, fname):$/;"	m	class:RNN
+mainEventLoop	trainer.py	/^    def mainEventLoop(self):$/;"	m	class:Trainer
 minibatch	is13/examples/elman-forward.py	/^from is13.utils.tools import shuffle, minibatch, contextwin$/;"	i
 minibatch	is13/examples/jordan-forward.py	/^from is13.utils.tools import shuffle, minibatch, contextwin$/;"	i
 minibatch	is13/utils/tools.py	/^def minibatch(l, bs):$/;"	f
@@ -102,6 +133,7 @@ nclasses	is13/examples/jordan-forward.py	/^                       train_y+test_y
 ne	is13/examples/elman-forward.py	/^                    ne = vocsize,$/;"	v
 ne	is13/examples/jordan-forward.py	/^                    ne = vocsize,$/;"	v
 np	rnn.py	/^import numpy as np$/;"	i
+np	trainer.py	/^import numpy as np$/;"	i
 np	wordVec.py	/^import numpy as np$/;"	i
 nsentences	is13/examples/elman-forward.py	/^    nsentences = len(train_lex)$/;"	v
 nsentences	is13/examples/jordan-forward.py	/^    nsentences = len(train_lex)$/;"	v
@@ -125,23 +157,27 @@ predictions_test	is13/examples/elman-forward.py	/^                             f
 predictions_test	is13/examples/jordan-forward.py	/^                             for x in test_lex ]$/;"	v
 predictions_valid	is13/examples/elman-forward.py	/^                             for x in valid_lex ]$/;"	v
 predictions_valid	is13/examples/jordan-forward.py	/^                             for x in valid_lex ]$/;"	v
+quitTraining	trainer.py	/^    def quitTraining(self):$/;"	m	class:Trainer
 random	is13/examples/elman-forward.py	/^import random$/;"	i
 random	is13/examples/jordan-forward.py	/^import random$/;"	i
 random	is13/metrics/accuracy.py	/^import random$/;"	i
 random	is13/utils/tools.py	/^import random$/;"	i
 recurrence	is13/rnn/elman.py	/^        def recurrence(x_t, h_tm1):$/;"	f	function:model.__init__
 recurrence	is13/rnn/jordan.py	/^        def recurrence(x_t, s_tm1):$/;"	f	function:model.__init__
-recurrence	rnn.py	/^        def recurrence(x_t, y_t, h_tm1):$/;"	f	function:RNN.__init__
+recurrence	rnn.py	/^        def recurrence(x_t, y_t, h_tm1):$/;"	f	function:RNN.initialize_ops
 res_test	is13/examples/elman-forward.py	/^        res_test  = conlleval(predictions_test, groundtruth_test, words_test, folder + '\/current.test.txt')$/;"	v
 res_test	is13/examples/jordan-forward.py	/^        res_test  = conlleval(predictions_test, groundtruth_test, words_test, folder + '\/current.test.txt')$/;"	v
 res_valid	is13/examples/elman-forward.py	/^        res_valid = conlleval(predictions_valid, groundtruth_valid, words_valid, folder + '\/current.valid.txt')$/;"	v
 res_valid	is13/examples/jordan-forward.py	/^        res_valid = conlleval(predictions_valid, groundtruth_valid, words_valid, folder + '\/current.valid.txt')$/;"	v
 rnn	is13/examples/elman-forward.py	/^    rnn = model(    nh = s['nhidden'],$/;"	v
 rnn	is13/examples/jordan-forward.py	/^    rnn = model(    nh = s['nhidden'],$/;"	v
+rnn	run.py	/^rnn = RNN(100, c.V, 50)$/;"	v
+run	ui.py	/^    def run(self):$/;"	m	class:UIThread
 s	is13/examples/elman-forward.py	/^    s = {'fold':3, # 5 folds 0,1,2,3,4$/;"	v
 s	is13/examples/jordan-forward.py	/^    s = {'fold':3, # 5 folds 0,1,2,3,4$/;"	v
 save	is13/rnn/elman.py	/^    def save(self, folder):   $/;"	m	class:model
 save	is13/rnn/jordan.py	/^    def save(self, folder):$/;"	m	class:model
+save	rnn.py	/^    def save(self, ep = 0):$/;"	m	class:RNN
 seq_to_indices	dataLoader.py	/^    def seq_to_indices(self, words):$/;"	m	class:Corpus
 seqs_to_XY	dataLoader.py	/^    def seqs_to_XY(self):$/;"	m	class:Corpus
 setUp	dataLoader_test.py	/^    def setUp(self):$/;"	m	class:TestDataLoader
@@ -155,20 +191,36 @@ subprocess	is13/examples/jordan-forward.py	/^import subprocess$/;"	i
 subprocess	is13/metrics/accuracy.py	/^import subprocess$/;"	i
 sys	is13/examples/elman-forward.py	/^import sys$/;"	i
 sys	is13/examples/jordan-forward.py	/^import sys$/;"	i
+sys	rnn.py	/^        import sys$/;"	i
 sys	trainer.py	/^import sys$/;"	i
 tesT_RNN_Train	rnn_test.py	/^    def tesT_RNN_Train(self):$/;"	m	class:TestRNN
-test_TrainingOnSentances	trainer_test.py	/^    def test_TrainingOnSentances(self):$/;"	m	class:TestRNNTrainer
+tesT_SentancePrintTest	trainer_test.py	/^    def tesT_SentancePrintTest(self):$/;"	m	class:TestRNNTrainer
+tesT_TrainingOnSentances	trainer_test.py	/^    def tesT_TrainingOnSentances(self):$/;"	m	class:TestRNNTrainer
+tesT_evaluating_sentance	trainer_test.py	/^    def tesT_evaluating_sentance(self):$/;"	m	class:TestRNNTrainer
+tesT_generating_sentance	trainer_test.py	/^    def tesT_generating_sentance(self):$/;"	m	class:TestRNNTrainer
+tesT_saving_model	trainer_test.py	/^    def tesT_saving_model(self):$/;"	m	class:TestRNNTrainer
+test_UIThread	ui_test.py	/^    def test_UIThread(self):$/;"	m	class:TestUI
+test_perplexicity	trainer_test.py	/^    def test_perplexicity(self):$/;"	m	class:TestRNNTrainer
+test_sentance	trainer.py	/^    def test_sentance(self,x , y):$/;"	m	class:Trainer
+textpad	ui.py	/^import curses.textpad as textpad$/;"	i
 theano	is13/rnn/elman.py	/^import theano$/;"	i
 theano	is13/rnn/jordan.py	/^import theano$/;"	i
 theano	rnn.py	/^import theano$/;"	i
+threading	ui.py	/^import threading, Queue$/;"	i
 tic	is13/examples/elman-forward.py	/^        tic = time.time()$/;"	v
 tic	is13/examples/jordan-forward.py	/^        tic = time.time()$/;"	v
 time	is13/examples/elman-forward.py	/^import time$/;"	i
 time	is13/examples/jordan-forward.py	/^import time$/;"	i
+time	ui.py	/^import time$/;"	i
+time	ui_test.py	/^import time$/;"	i
 train	trainer.py	/^    def train(self):$/;"	m	class:Trainer
+trainer	run.py	/^trainer = Trainer(c,rnn, nepochs=50, alpha = 0.001)$/;"	v
+txt	run.py	/^txt = f.read()$/;"	v
 unittest	dataLoader_test.py	/^import unittest$/;"	i
 unittest	rnn_test.py	/^import unittest$/;"	i
 unittest	trainer_test.py	/^import unittest$/;"	i
+unittest	ui_test.py	/^import unittest$/;"	i
+updateInfo	ui.py	/^    def updateInfo(self, info):$/;"	m	class:UIThread
 urllib	is13/data/load.py	/^import urllib$/;"	i
 vocsize	is13/examples/elman-forward.py	/^    vocsize = len(dic['words2idx'])$/;"	v
 vocsize	is13/examples/jordan-forward.py	/^                       train_lex+valid_lex+test_lex)))$/;"	v
