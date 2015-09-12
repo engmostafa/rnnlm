@@ -2,6 +2,8 @@ from rnn import RNN
 from colorama import Fore
 import sys
 import numpy as np
+import Queue
+from ui import UIThread
 
 class Trainer():
 
@@ -12,18 +14,26 @@ class Trainer():
         self.c = c
         self.rnn = rnn
 
+        self.display_q = Queue.Queue()
+        self.signal_q = Queue.Queue()
+        self.ui = UIThread(inputChannel=self.display_q,sigChannel=self.signal_q)
+        self.ui.start()
+
+        self.scores = {}
+
+
 
     def train(self):
         
         X = self.c.X
         Y = self.c.Y
 
-        print Fore.BLUE, "\n Started Training \n"
+        self.lastAvg = 0.0
+
         ecosts = []
         for e in xrange(self.nepochs):
             lastCost = 0.0 
             for i in range(len(X)):
-            # for i in range(100):
 
                 xseq = X[i]
                 yseq = Y[i]
@@ -35,28 +45,73 @@ class Trainer():
         
                 for k in xrange(niter):
                     try:
-                        cost = self.rnn.train(list(xseq), list(yseq), self.alpha) , 
-                        print Fore.RED, ("Sent #%d, Epoch #%d Cost=%f  \r")%(i, e, cost[0]),
-                        sys.stdout.flush()
+                        cost = self.rnn.train(list(xseq), list(yseq), self.alpha)
+
+                        info = {
+                                'Sentance': i,
+                                'Epoch': e,
+                                'Cost': cost,
+                                'Last Average': self.lastAvg,
+                                'Scores': self.scores,
+                        }
+                        self.display_q.put(info)
+                        sig = self.checkForSignals()
+
+                        if sig == 1:
+                            self.quitTraining()
+                            return
+
+                        if sig == 2:
+                            sig2 = 0
+                            while sig2 != 2 :
+                                sig2 = self.checkForSignals()
+
 
                     except KeyboardInterrupt:
-                        self.rnn.save()
-                        self.generate_sequence()
-                        # print Fore.BLUE, "\nACC = ", self.fullDataTest()
+                        pass
+                        self.quitTraining()
+                        return
 
 
-                lastCost += cost[0]
+                lastCost += cost
                 avgCost = lastCost / (i+1)
 
-                # print Fore.YELLOW,
-                # print (" TotAvgCost = %f at epoch %d, sentance %d \r")%(avgCost, e+1, i),
-                # sys.stdout.flush()
 
-            # print Fore.GREEN, "AvgCost for epoch #%d = %f  \n\r"%(e+1, avgCost)
             ecosts.append(avgCost)
 
             self.rnn.save(ep = e)
-            print Fore.BLUE, "\nACC = ", self.fullDataTest()
+            self.fullDataTest()
+
+
+    def quitTraining(self):
+
+        print Fore.RED, "\n\n QUITTING TRAINING...\n\n"
+
+    def checkForSignals(self):
+
+        try:
+            msgCh = self.signal_q.get_nowait()
+            
+            if msgCh == ord('q'):
+                return 1
+            
+            if msgCh == ord('p'):
+                return 2
+
+            if msgCh == ord('s'):
+                strng = self.ui.getTextString()
+                strng = strng.replace("\n", "")
+                print strng.split(' ')
+                score = self.findProbabilityOfSentance(strng)
+                self.scores[strng] = score
+                self.display_q.put(self.scores)
+
+            if msgCh == ord('c'):
+                self.fullDataTest()
+        except Queue.Empty :
+            pass
+
+        return 0
 
 
     def fullDataTest(self):
@@ -73,8 +128,12 @@ class Trainer():
             totAcc += acc
             avgAcc = totAcc / (i+1)
             
-            print Fore.GREEN , "#%d - Average Acc %.2f %% \r" % (i, avgAcc),
-            sys.stdout.flush()
+            info = {
+                    'Sentance': i,
+                    'AvgCost': "%.2f %%"%avgAcc,
+            }
+            self.display_q.put(info)
+            self.lastAvg = avgAcc
 
 
         return totAcc/len(X)
@@ -83,16 +142,11 @@ class Trainer():
         
         ypred = self.rnn.classify(list(x),list(y))
         
-        # print Fore.GREEN, self.c.idx_to_sentance(x)
-        # print Fore.GREEN, self.c.idx_to_sentance(y)
-        # print Fore.CYAN, self.c.idx_to_sentance(list(ypred))
         
         accuracy = float(np.count_nonzero(ypred-y))
         accuracy /= float(len(y))
 
         accuracy = 100*(1.0-accuracy)
-        # print Fore.CYAN, ypred-y 
-        # print Fore.GREEN, accuracy, "%\n"
 
         return accuracy
 
@@ -112,3 +166,47 @@ class Trainer():
 
         print Fore.GREEN, self.c.idx_to_sentance(seq)
 
+
+    def calcPerplexicity(self, c=None):
+
+        if c == None:
+            c = self.c
+
+        X = c.X
+        Y = c.Y
+        
+        totAcc = 0.0
+        for i in range(len(X)):
+            xseq = X[i]
+            yseq = Y[i]
+
+            curP = self.Perplexicity_xy(xseq, yseq)
+            totAcc += curP
+            avgAcc = totAcc / (i+1)
+
+            info = {
+                    'Sentance': i,
+                    'AvgPerp': "%.2f"%avgAcc,
+                    'Current Perplexicity': "%.2f"%curP,
+            }
+            self.display_q.put(info)
+
+        return avgAcc
+
+
+    def Perplexicity_xy(self,x,y):
+
+        cost = self.rnn.cost(list(x),list(y))
+        return np.exp2(cost)
+
+    def findProbabilityOfSentance(self, sentance = "The president said he will ask congress"):
+
+        words = sentance.split(' ')
+
+        # words.append("</s>")
+        # words.insert(0,"<s>")
+        xseq = self.c.seq_to_indices(words)
+        y = xseq[1:] #= range(len(xseq))
+        x = xseq[:-1]
+        
+        return self.Perplexicity_xy(x,y)

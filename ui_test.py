@@ -10,7 +10,8 @@ class TestUI(unittest.TestCase):
         print "Testing...."
     
         inp_q = Queue.Queue()
-        ui = UIThread(inputChannel=inp_q)
+        out_q = Queue.Queue()
+        ui = UIThread(inputChannel=inp_q, sigChannel=out_q)
         ui.start()
 
         for i in range(6):
