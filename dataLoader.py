@@ -25,12 +25,12 @@ class Corpus():
         self.generateVocabulary()
         self.seqs_to_XY()
 
-    def brownInit(self, num=200):
+    def brownInit(self, num=200, offset=0):
         
         from nltk.corpus import brown
         self.brown = True
 
-        self.sentances = brown.sents()[0:num]
+        self.sentances = brown.sents()[offset:(offset+num)]
 
         self.vocab = set(["UNKNOWN","<s>", "</s>"])
         for s in self.sentances :
@@ -63,16 +63,18 @@ class Corpus():
 
         return array([self.wordToNum.get(w.lower(), 0) for w in words])
 
-    def docs_to_indices(self):
+    def docs_to_indices(self, docs=None):
         # docs = [pad_sequence(seq, left=1, right=1) for seq in docs]
-        docs = self.sentances
+        if docs == None:
+            docs = self.sentances
         ret = []
         for seq in docs:
             # words = [canonicalize_word(wt[0], word_to_num) for wt in seq]
-            if self.brown :
-                words = seq
-            else:
+            try:
                 words = seq.split(' ')
+            except:
+                words = seq
+
             words.append("</s>")
             words.insert(0,"<s>")
             if len(words) < 4:
@@ -87,7 +89,7 @@ class Corpus():
 
     def seqs_to_XY(self):
 
-        seqs_with_idx = self.docs_to_indices()
+        seqs_with_idx = self.docs_to_indices(self.sentances)
 
         X, Y = zip(*[self.offset_seq(s) for s in seqs_with_idx])
         self.X, self.Y = array(X, dtype=object), array(Y, dtype=object)
@@ -97,3 +99,13 @@ class Corpus():
 
         out = [self.numToWord.get(s, "_") for s in seq]
         return ' '.join(out)
+
+    def get_XY_For_another_corpus(self, c):
+
+        seqs_with_idx = self.docs_to_indices(c.sentances)
+
+        X, Y = zip(*[self.offset_seq(s) for s in seqs_with_idx])
+        X, Y = array(X, dtype=object), array(Y, dtype=object)
+        return X, Y
+
+

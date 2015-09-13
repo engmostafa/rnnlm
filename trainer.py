@@ -19,8 +19,19 @@ class Trainer():
         self.ui = UIThread(inputChannel=self.display_q,sigChannel=self.signal_q)
         self.ui.start()
 
+        info_st = {
+                "p": "Start/Pause Training",
+                "y": "Save Params",
+                "s": "Sentance Testing",
+                }
+        self.display_q.put(info_st)
+
         self.scores = {}
 
+    def sendMsg(self, msg):
+
+        info = {"msg": msg}
+        self.display_q.put(info)
 
     def mainEventLoop(self):
 
@@ -29,6 +40,7 @@ class Trainer():
         while (sig != 1 and sig !=2):
             sig = self.checkForSignals()
             if sig == 2:
+                self.sendMsg("Training Called")
                 self.train()
 
 
@@ -36,6 +48,7 @@ class Trainer():
 
     def train(self):
         
+        self.sendMsg("Starting Training")
         X = self.c.X
         Y = self.c.Y
 
@@ -90,12 +103,13 @@ class Trainer():
 
             ecosts.append(avgCost)
 
-            self.rnn.save(ep = e)
-            self.fullDataTest()
+            self.rnn.save("epoch%d"%e)
+            # self.fullDataTest()
 
 
     def quitTraining(self):
 
+        self.rnn.save("beforequit")
         print Fore.RED, "\n\n QUITTING TRAINING...\n\n"
 
     def checkForSignals(self):
@@ -117,8 +131,18 @@ class Trainer():
                 self.scores[strng] = score
                 self.display_q.put(self.scores)
 
+            if msgCh == ord('t'):
+                self.calcPerplexicity()
+
             if msgCh == ord('c'):
                 self.fullDataTest()
+
+            if msgCh == ord('y'):
+                strng = self.ui.getTextString()
+                strng = strng.replace("\n", "")
+                self.rnn.save("%s.save"%strng)
+
+
         except Queue.Empty :
             pass
 
@@ -181,24 +205,43 @@ class Trainer():
     def calcPerplexicity(self, c=None):
 
         if c == None:
-            c = self.c
 
-        X = c.X
-        Y = c.Y
+            X = self.c.X
+            Y = self.c.Y
+        else :
+            X,Y = self.c.get_XY_For_another_corpus(c)
         
         totAcc = 0.0
+        totWords = 0
+        totPer = 0.0
+        minPer = 999999
+        maxPer = 0
         for i in range(len(X)):
             xseq = X[i]
             yseq = Y[i]
 
-            curP = self.Perplexicity_xy(xseq, yseq)
-            totAcc += curP
-            avgAcc = totAcc / (i+1)
+            # curP = self.Perplexicity_xy(xseq, yseq)
+
+            cost = self.rnn.cost(list(xseq),list(yseq))
+            curP =  np.exp(cost)
+            totPer += curP
+            if maxPer < curP:
+                maxPer = curP
+            if minPer > curP and curP > 10:
+                minPer = curP
+            totAcc += cost * len(xseq)
+            totWords += len(xseq)
+
+            avgAcc = np.exp(totAcc /totWords )
+            totSumAvg = totPer / (i+1)
 
             info = {
                     'Sentance': i,
-                    'AvgPerp': "%.2f"%avgAcc,
-                    'Current Perplexicity': "%.2f"%curP,
+                    'PERPLEXITY': "%.2f"%avgAcc,
+                    'Current': "%.2f"%curP,
+                    'Min': minPer,
+                    'Max': maxPer,
+                    'SumAvgPer' : totSumAvg,
             }
             self.display_q.put(info)
 

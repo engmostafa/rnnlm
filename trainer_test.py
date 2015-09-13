@@ -36,7 +36,9 @@ class TestRNNTrainer(unittest.TestCase):
 
     def test_perplexicity(self):
 
-        p = self.trainer.calcPerplexicity()
+        c = Corpus("asdada asdaa asd adada dadada. asdas dasd.da ad.a d.sa da asd")
+        c.brownInit(500,0)
+        p = self.trainer.calcPerplexicity(c)
         print Fore.CYAN, p, "\n"
 
     def tesT_evaluating_sentance(self):

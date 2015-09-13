@@ -30,7 +30,7 @@ class RNN():
         self.params = [ self.emb, self.Wx, self.Wh, self.W, self.bh, self.b, self.h0 ]
         self.names  = ['embeddings', 'Wx', 'Wh', 'W', 'bh', 'b', 'h0']
 
-    def initialize_ops(self):
+    # def initialize_ops(self):
 
         # Ops definition
         idxs = T.ivector() # as many columns as context window size/lines as words in the sentence
@@ -108,21 +108,21 @@ class RNN():
 
         import cPickle
 
-        # try:
-        f = file(fname, 'rb')
-        out = cPickle.load(f)
-        f.close()
+        try:
+          f = file(fname, 'rb')
+          out = cPickle.load(f)
+          f.close()
 
-        self.__dict__.update(out)
+          self.__dict__.update(out)
 
-        # except Exception, e:
-        #     print "LOADERRER", e
-        #     pass
+        except Exception, e:
+            # print "LOADERRER", e
+            pass
 
-    def save(self, ep = 0):
+    def save(self, fname="rnn.save_bak"):
         import cPickle
 
-        f = file('rnn.save_%d'%ep, 'wb')
+        f = file(fname, 'wb')
         g = file('rnn.save', 'wb')
         state = dict(self.__dict__)
         import sys
