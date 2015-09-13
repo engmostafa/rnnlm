@@ -40,7 +40,8 @@ class Corpus():
 
         self.V = len(self.vocab)        
         self.numToWord = dict(enumerate(self.vocab))
-        self.wordToNum = {v:k for k,v in self.numToWord.iteritems()}
+        # self.wordToNum = {v:k for k,v in self.numToWord.iteritems()}
+        self.wordToNum = dict((v,k) for k,v in self.numToWord.iteritems())
 
         self.seqs_to_XY()
     
@@ -55,7 +56,8 @@ class Corpus():
 
         self.V = len(self.vocab)        
         self.numToWord = dict(enumerate(self.vocab))
-        self.wordToNum = {v:k for k,v in self.numToWord.iteritems()}
+        # self.wordToNum = {v:k for k,v in self.numToWord.iteritems()}
+        self.wordToNum = dict((v,k) for k,v in self.numToWord.iteritems())
 
         # print Fore.GREEN, self.wordToNum['on']
 

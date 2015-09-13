@@ -16,7 +16,7 @@ class UIThread(threading.Thread):
         self.myscreen.border(0)
         self.myscreen.timeout(0)
         curses.noecho()
-        curses.cbreak()
+        # curses.cbreak()
         # self.myscreen.keypad(1);
         self.textbox = textpad.Textbox(self.myscreen)
 
@@ -79,10 +79,10 @@ class UIThread(threading.Thread):
 
     def exitSelf(self):
         self.stoprequest.set()
-        curses.endwin()
-        curses.nocbreak() 
+        # curses.nocbreak() 
         # self.myscreen.keypad(0)
         curses.echo()
+        curses.endwin()
 
         
 
